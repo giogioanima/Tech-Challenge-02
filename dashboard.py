@@ -121,6 +121,11 @@ st.markdown(
     color: #f145f7;
     }
 
+    .about5-style {
+    font-weight: normal;
+    color: #fdb5ff;
+    }
+
     .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
         font-size: 16px;
         font-weight: normal;
@@ -251,12 +256,38 @@ with tab1:
 
     st.write("Utilizaremos o Statsmodel para desmembrar nossos dados e visualizar em gráficos, o que nos auxiliará na compreensão dos dados e na decisão sobre qual modelo preditivo adotar.")
 
+    code = '''from statsmodels.tsa.seasonal import seasonal_decompose
+    import matplotlib.pyplot as plt
+
+    df_limpo = df
+    df_limpo['Date'] = pd.to_datetime(df_limpo['Date'])
+    df_limpo = df.drop(columns=['Open', 'High', 'Low', 'Volume', 'Adj Close'])
+    df_limpo = df_limpo.set_index('Date')
+
+    seasonplot = seasonal_decompose(df_limpo, model='multiplicative', period=5)
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(30,10))
+    seasonplot.observed.plot(ax=ax1)
+    ax1.set_title('Série Real')
+    ax1.set_xlabel('Data')
+    ax1.set_ylabel('Valor')
+    seasonplot.trend.plot(ax=ax2)
+    ax2.set_title('Tendência')
+    ax2.set_xlabel('Data')
+    ax2.set_ylabel('Valor')
+    seasonplot.seasonal.plot(ax=ax3)
+    ax3.set_title('Sazonalidade')
+    ax3.set_xlabel('Data')
+    ax3.set_ylabel('Valor')
+    seasonplot.resid.plot(ax=ax4)
+    ax4.set_title('Resíduos')
+    ax4.set_xlabel('Data')
+    ax4.set_ylabel('Valor')
+    plt.tight_layout()'''
+    st.code(code, language='python')
+
     from PIL import Image
-    img_codedec = Image.open(r'codedec.png')
-    st.image(img_codedec, use_column_width=False)
-    st.write(" ")
     
-    img_path = Image.open(r'decomp.png')
+    img_path = Image.open(r'img/decomp.png')
     st.image(img_path, use_column_width=True)
 
     st.write(" ")
@@ -272,8 +303,31 @@ with tab1:
     st.write("A estacionariedade em séries temporais significa que suas propriedades estatísticas, como média e variância, permanecem constantes ao longo do tempo. Isso é crucial para muitos modelos de previsão. O Teste de Dickey-Fuller Aumentado (ADF) é usado para verificar se uma série é estacionária, identificando tendências significativas que podem influenciar as análises e previsões.")
     st.write(" ")
 
-    img_adf1 = Image.open(r'test_adf1.png')
-    st.image(img_adf1, use_column_width=False)
+    code2 = '''from statsmodels.tsa.stattools import adfuller
+    adf_result = adfuller(df_limpo['Close'])
+    print(f'ADF Statistic: {adf_result[0]}')
+    print(f'p-value: {adf_result[1]}')
+    print('Resultados do Teste de Estacionariedade:')
+    print('--------------------------------------')
+    print('Teste Estatístico:', adf_result[0])
+    print('Valor-p:', adf_result[1])
+    print('Valores Críticos:')
+    for key, value in adf_result[4].items():
+    print(f'   {key}: {value}')'''
+    st.code(code2, language='python')
+    st.markdown(':arrow_right: <h class="about6-style">Resultado:</h>', unsafe_allow_html=True)
+    code3 = '''ADF Statistic: -0.8760007623060628
+    p-value: 0.7957729496243398
+    Resultados do Teste de Estacionariedade:
+    --------------------------------------
+    Teste Estatístico: -0.8760007623060628
+    Valor-p: 0.7957729496243398
+    Valores Críticos:
+    1%: -3.4316755072912444
+    5%: -2.862125729218594
+    10%: -2.5670817846605103'''
+    st.code(code3, language='python')
+
     st.write(" ")
     st.markdown(':memo: <h class="about3-style">Observações</h>', unsafe_allow_html=True)
     st.write("- A estatística de teste é maior do que todos os valores críticos (1%, 5% e 10%) e o valor-p de 0.796 é maior do que o nível de significância comum de 0.05, indicando que não podemos rejeitar a hipótese nula de não estacionariedade na série temporal.")
@@ -313,27 +367,28 @@ with tab2:
         with coluna7:
             st.write(" ")
             st.markdown(':mag_right: <h class="about3-style">Validando com Mean Absolute Percentage Error (MAPE)</h>', unsafe_allow_html=True)
-            
-            img_MAmape = Image.open(r'MA_mape.png')
-            st.image(img_MAmape, use_column_width=False)
             st.write(" ")
 
-            def calculate_mape(y_true, y_pred):
-                errors = np.abs(y_true - y_pred)
-                ape = errors / y_true * 100
-                mape = np.mean(ape)
+            code4 = '''def calculate_mape(y_true, y_pred):
+                errors = np.abs (y_true - y_pred)
+                аре = errors / y_true * 100
+                mape = np.mean (ape)
                 return mape
-            y_true = df_ma['Close']
-            y_pred30 = df_ma['MA_window_30']
-            y_pred90 = df_ma['MA_window_90']
+y_true = df_ma['Close']
+y_pred30 = df_ma['MA_window_30']
+y_pred90 = df_ma['MA_window_90']
 
-            # Calcular o MAPE
+# Calcular o MAPE
+mape = calculate_mape(y_true, y_pred30)
+st.write({"MAPE - 30d: {mape: .2f}%")
+mape = calculate_mape(y_true, y_pred90)
+st.write(f"MAPE - 90d: {mape: .2f}%") '''
+            st.code(code4, language='python')
             st.markdown(':sparkles: <h class="about3-style">Resultados:</h>', unsafe_allow_html=True)
-            mape = calculate_mape(y_true, y_pred30)
-            st.write(f"MAPE - 30d: {mape:.2f}% - Um ótimo resultado, quando observado isoladamente.")
-            mape = calculate_mape(y_true, y_pred90)
-            st.write(f"MAPE - 90d: {mape:.2f}% - Também um ótimo resultado, mas com desempenho inferior ao de 30 dias.")
-            st.write(" ")
+            code5 = '''MAPE - 30d: 3.94% - Um ótimo resultado, quando observado isoladamente.
+MAPE - 90d: 6.96% - Também um ótimo resultado, mas com desempenho inferior ao de 30 dias.'''
+            st.code(code5, language='python')
+
         
             st.markdown(':x: <h class="about3-style">Conclusões:</h>', unsafe_allow_html=True)
             st.write("- Avaliação do MAPE: Embora o MAPE seja uma métrica comum para avaliar a precisão de modelos de previsão, é importante considerar outras métricas e realizar uma análise mais abrangente do desempenho do modelo. O MAPE sozinho pode não fornecer uma imagem completa do desempenho do modelo, especialmente em séries temporais complexas.")
@@ -379,7 +434,7 @@ with tab2:
             df_logscale = np.log(df_limpo)
             df_diff = df_logscale - df_logscale.shift() #diferença entre o valor anterior e o atual
 
-            img_diff = Image.open(r'diff.png')
+            img_diff = Image.open(r'img/diff.png')
             st.image(img_diff, use_column_width=False)
             st.write(" ")
 
@@ -397,7 +452,35 @@ with tab2:
             st.markdown(':microscope: <h class="about3-style">Análise de Autocorrelação (ACF e PACF)</h>', unsafe_allow_html=True)
             st.write("Analisar a autocorrelação em séries temporais é crucial para entender padrões temporais, selecionar e validar modelos apropriados, e avaliar a estacionariedade dos dados. A presença de autocorrelação indica dependência serial nos dados, influenciando a inclusão de termos autoregressivos e de médias móveis em modelos como o ARIMA. Além disso, a autocorrelação dos resíduos é utilizada para validar a adequação do modelo.")
             
-            img_acf = Image.open(r'acf.png')
+            code6 = '''#Plotando ACF & PACF
+lag_acf = acf(df_diff, nlags=9)
+lag_pacf = pacf(df_diff, nlags=9, method='ols')
+
+plt.figure(figsize=(10, 6))
+
+plt.subplot(121)
+plt.plot(lag_acf)
+plt.axhline(y=0, linestyle='--', color='gray')
+plt.axhline(y=-1.96/np.sqrt(len(df_diff)), linestyle='--', color='gray')
+plt.axhline(y=1.96/np.sqrt(len(df_diff)), linestyle='--', color='gray')
+plt.axvline(x=1, linestyle='--', color='gray')
+plt.axvline(x=2, linestyle='--', color='gray')
+plt.title('Função de Autocorrelação')
+
+plt.subplot(122)
+plt.plot(lag_pacf)
+plt.axhline(y=0, linestyle='--', color='gray')
+plt.axhline(y=-1.96/np.sqrt(len(df_diff)), linestyle='--', color='gray')
+plt.axhline(y=1.96/np.sqrt(len(df_diff)), linestyle='--', color='gray')
+plt.axvline(x=1, linestyle='--', color='gray')
+plt.axvline(x=2, linestyle='--', color='gray')
+plt.title('Função de Autocorrelação Parcial')
+
+plt.tight_layout()
+'''
+            st.code(code6, language='python')
+
+            img_acf = Image.open(r'img/acf.png')
             st.image(img_acf, width=615, use_column_width=False)
             st.write(" ")
 
@@ -412,7 +495,16 @@ with tab2:
             st.write(" ")
             st.markdown(':microscope: <h class="about3-style">Aplicando o Modelo ARIMA</h>', unsafe_allow_html=True)
             st.write("Ao analisar modelos individuais AR e MA antes de aplicar o ARIMA, busca-se minimizar a Soma dos Quadrados dos Resíduos (RSS), onde valores mais baixos indicam uma melhor adequação do modelo aos dados. Idealmente, visamos alcançar um RSS o mais próximo possível de zero, indicando um ajuste ideal do modelo aos dados observados.")
-            img_arima = Image.open(r'arima.png')
+            code7 = '''#MODELO ARIMA
+
+modelo = ARIMA(df_diff, order=(2,1,2))#(p,d,q)
+results_AR = modelo.fit()
+plt.plot(df_diff)
+plt.plot(results_AR.fittedvalues, color='red')
+plt.title('RSS: %.4f'%sum((results_AR.fittedvalues - df_diff['Close'])**2))
+plt.show()'''
+            st.code(code7, language='python')
+            img_arima = Image.open(r'img/arima.png')
             st.image(img_arima, width=400, use_column_width=False)
             st.write(" ")
             st.write("- Um RSS de 1.4508 sugere que o modelo ARIMA tem uma adequação razoável aos dados observados, indicando uma boa captura das características da série temporal. No entanto, é importante considerar outras métricas de avaliação e o contexto específico da aplicação para uma interpretação completa.")
@@ -424,10 +516,20 @@ with tab2:
             st.write(" ")
             st.markdown(':mag_right: <h class="about3-style">Validando com Mean Absolute Percentage Error (MAPE)</h>', unsafe_allow_html=True)
            
-            img_mapearima = Image.open(r'mapearima.png')
-            st.image(img_mapearima, width=600, use_column_width=False)
-            st.write(" ")
-            st.write("MAPE: 1132.76%")
+            code8 = '''from sklearn.metrics import mean_absolute_error
+
+predictions = results_AR.fittedvalues
+predictions.index = df_diff.index
+
+predicted_values = df_logscale['Close'].iloc[0] + np.cumsum(predictions)
+mape = mean_absolute_error(df_diff['Close'], predicted_values) * 100
+
+print(f"MAPE: {mape:.2f}%")'''
+            st.code(code8, language='python')
+            st.markdown(':sparkles: <h class="about3-style">Resultados:</h>', unsafe_allow_html=True)
+            code9 = '''MAPE: 1132.76%'''
+            st.code(code9, language='python')
+
             st.write(" ")
             st.markdown(':x: <h class="about3-style">Conclusões:</h>', unsafe_allow_html=True)
             st.write("- O MAPE de 1132.76% obtido pelo modelo ARIMA indica uma falta significativa de precisão nas previsões. Isso sugere que o modelo não está capturando efetivamente a estrutura dos dados e que suas previsões estão fora por uma margem substancial.") 
@@ -446,14 +548,31 @@ with tab2:
             st.markdown('📋 <h class="about3-style">Aplicando o Prophet</h>', unsafe_allow_html=True)
             st.write('Na primeira etapa da análise com o Prophet, é essencial modelar os dados adequadamente, seguindo o padrão de utilização das variáveis ds e y. Essa padronização é fundamental para garantir a correta interpretação e funcionamento do modelo.')
 
-            img_dsy = Image.open(r'ds_y.png')
-            st.image(img_dsy, width=450, use_column_width=False)
+            code10 = '''symbol = '^BVSP'
+start_date = '2004-01-01'
+end_date = '2024-01-01'
+
+df = yf.download(symbol, start=start_date, end=end_date)
+df = df.reset_index('Date')
+df['Date'] = pd.to_datetime(df['Date'])
+df.drop(columns=['Open', 'High', 'Low', 'Volume', 'Adj Close'], inplace=True)
+df[['ds','y']] = df[['Date','Close']]
+df.head()'''
+            st.code(code10, language='python')
+            st.markdown(':sparkles: <h class="about3-style">Resultados:</h>', unsafe_allow_html=True)
+            code11 = '''Index    Date	       Close	  ds	        y
+0	2004-01-02	22445.0	2004-01-02	22445.0
+1	2004-01-05	23532.0	2004-01-05	23532.0
+2	2004-01-06	23576.0	2004-01-06	23576.0
+3	2004-01-07	23320.0	2004-01-07	23320.0
+4	2004-01-08	23717.0	2004-01-08	23717.0'''
+            st.code(code11, language='python')
 
             st.write(" ")
-            st.write('Após etapas de modelagem, como a separação da base de treino e de teste, é possível obter os seguintes resultados:')
-            img_prop = Image.open(r'prophet.png')
+            st.write('Após as etapas de modelagem, é possível obter os seguintes resultados:')
+            img_prop = Image.open(r'img/prophet.png')
             st.image(img_prop, use_column_width=True)
-            img_change = Image.open(r'changepoints.png')
+            img_change = Image.open(r'img/changepoints.png')
             st.image(img_change, use_column_width=True)
 
             st.write('- Nos gráficos acima, os pontos pretos representam os dados reais da série temporal, enquanto os pontos vermelhos correspondem às projeções geradas pelo modelo Prophet. Além disso, a linha azul ao redor das projeções indica a margem de confiança associada às previsões.')
@@ -468,8 +587,10 @@ with tab2:
             st.markdown(':bar_chart: <h class="about3-style">Decompondo com o Prophet</h>', unsafe_allow_html=True)
             st.write('O Prophet possui uma capacidade única de decompor automaticamente séries temporais em seus diversos componentes. Isso inclui a identificação da tendência geral dos dados, a análise dos padrões sazonais anuais e a consideração dos efeitos de feriados, quando disponíveis. Essa funcionalidade permite uma compreensão mais abrangente e detalhada da estrutura subjacente dos dados temporais, facilitando a modelagem e previsão mais precisa.')
 
-            st.write('<h class="about4-style">modelo.plot_components(forecast, figsize=(10,6));</h>', unsafe_allow_html=True)
-            img_propdec = Image.open(r'propdec.png')
+            code12 = '''modelo.plot_components(forecast, figsize=(10,6));'''
+            st.code(code12, language='python')
+
+            img_propdec = Image.open(r'img/propdec.png')
             st.image(img_propdec, use_column_width=True)
 
             st.write(" ")
@@ -479,10 +600,21 @@ with tab2:
 
             st.write(" ")
             st.markdown(':mag_right: <h class="about3-style">Validando com Mean Absolute Percentage Error (MAPE)</h>', unsafe_allow_html=True)
-            img_propmape = Image.open(r'propmape.png')
-            st.image(img_propmape, use_column_width=True)
-            st.write(" ")
-            st.markdown('<h class="about5-style">* MAPE: 6.71%</h>', unsafe_allow_html=True)
+            code13 = '''forecast_cols = ['ds', 'yhat']
+valores_reais_cols = ['ds', 'y']
+forecast = forecast[forecast_cols]
+valores_reais = train_data[valores_reais_cols]
+
+resultados = pd.merge(forecast, valores_reais, on='ds', how='inner')
+resultados['erro_percentual_absoluto'] = np.abs((resultados['y'] - resultados['yhat']) / resultados['y']) * 100
+mape = np.mean(resultados['erro_percentual_absoluto'])
+
+print(f"MAPE: {mape:.2f}%")'''
+            st.code(code13, language='python')
+            st.markdown(':sparkles: <h class="about3-style">Resultados:</h>', unsafe_allow_html=True)
+            code14 = '''MAPE: 6.71%'''
+            st.code(code14, language='python')
+
             st.write(" ")
             st.markdown(':heavy_check_mark: <h class="about3-style">Conclusões:</h>', unsafe_allow_html=True)
             st.write("- Com um MAPE de 6.71%, o modelo Prophet demonstra uma precisão satisfatória em suas previsões, indicando sua capacidade de realizar previsões próximas aos valores reais. Essa baixa taxa de erro sugere que o Prophet é uma ferramenta confiável para previsões futuras do mercado financeiro.") 
