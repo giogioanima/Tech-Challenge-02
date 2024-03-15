@@ -285,6 +285,36 @@ with tab1:
     plt.tight_layout()'''
     st.code(code, language='python')
 
+    from statsmodels.tsa.seasonal import seasonal_decompose
+    import matplotlib.pyplot as plt
+
+    df_limpo = df
+    df_limpo['Date'] = pd.to_datetime(df_limpo['Date'])
+    df_limpo = df.drop(columns=['Open', 'High', 'Low', 'Volume', 'Adj Close'])
+    df_limpo = df_limpo.set_index('Date')
+
+    seasonplot = seasonal_decompose(df_limpo, model='multiplicative', period=5)
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(30,10))
+    seasonplot.observed.plot(ax=ax1)
+    ax1.set_title('Série Real')
+    ax1.set_xlabel('Data')
+    ax1.set_ylabel('Valor')
+    seasonplot.trend.plot(ax=ax2)
+    ax2.set_title('Tendência')
+    ax2.set_xlabel('Data')
+    ax2.set_ylabel('Valor')
+    seasonplot.seasonal.plot(ax=ax3)
+    ax3.set_title('Sazonalidade')
+    ax3.set_xlabel('Data')
+    ax3.set_ylabel('Valor')
+    seasonplot.resid.plot(ax=ax4)
+    ax4.set_title('Resíduos')
+    ax4.set_xlabel('Data')
+    ax4.set_ylabel('Valor')
+    plt.tight_layout()
+
+
+
     from PIL import Image
     
     img_path = Image.open(r'img/decomp.png')
@@ -384,7 +414,7 @@ st.write({"MAPE - 30d: {mape: .2f}%")
 mape = calculate_mape(y_true, y_pred90)
 st.write(f"MAPE - 90d: {mape: .2f}%") '''
             st.code(code4, language='python')
-            st.markdown(':sparkles: <h class="about3-style">Resultados:</h>', unsafe_allow_html=True)
+            st.markdown(':arrow_right: <h class="about6-style">Resultado:</h>', unsafe_allow_html=True)
             code5 = '''MAPE - 30d: 3.94% - Um ótimo resultado, quando observado isoladamente.
 MAPE - 90d: 6.96% - Também um ótimo resultado, mas com desempenho inferior ao de 30 dias.'''
             st.code(code5, language='python')
@@ -433,14 +463,16 @@ MAPE - 90d: 6.96% - Também um ótimo resultado, mas com desempenho inferior ao 
 
             df_logscale = np.log(df_limpo)
             df_diff = df_logscale - df_logscale.shift() #diferença entre o valor anterior e o atual
-
+            st.write(" ")
             img_diff = Image.open(r'img/diff.png')
-            st.image(img_diff, use_column_width=False)
+            st.image(img_diff, use_column_width=True)
             st.write(" ")
 
             df_diff.dropna(inplace=True)
+            st.write(" ")
             test_stationarity(df_diff)
-
+            st.write(" ")
+            st.write(" ")
             st.markdown(':sparkles: <h class="about3-style">Resultado:</h>', unsafe_allow_html=True)
             st.write('- Com base nos resultados fornecidos, podemos concluir que a série temporal é estacionária após a transformação por diferenciação, pois o valor da estatística do teste é significativamente menor que os valores críticos, e o valor p é muito próximo de zero. Isso sugere que não há evidências estatísticas para rejeitar a hipótese nula de estacionariedade.')
            
@@ -481,7 +513,7 @@ plt.tight_layout()
             st.code(code6, language='python')
 
             img_acf = Image.open(r'img/acf.png')
-            st.image(img_acf, width=615, use_column_width=False)
+            st.image(img_acf, width=457, use_column_width=False)
             st.write(" ")
 
             # Calcular o MAPE
