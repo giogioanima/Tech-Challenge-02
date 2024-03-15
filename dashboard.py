@@ -251,10 +251,12 @@ with tab1:
 
     st.write("Utilizaremos o Statsmodel para desmembrar nossos dados e visualizar em gráficos, o que nos auxiliará na compreensão dos dados e na decisão sobre qual modelo preditivo adotar.")
 
-    img_codedec = 'https://github.com/giogioanima/Tech-Challenge-02/blob/main/img/codedec.PNG'
+    from PIL import Image
+    img_codedec = Image.open('C:\Users\gih\Downloads\postechchall02\img\codedec.png')
     st.image(img_codedec, use_column_width=False)
     st.write(" ")
-    img_path = 'https://github.com/giogioanima/Tech-Challenge-02/blob/main/img/decomp.png'
+    
+    img_path = Image.open('C:\Users\gih\Downloads\postechchall02\img\decomp.png')
     st.image(img_path, use_column_width=True)
 
     st.write(" ")
@@ -270,7 +272,7 @@ with tab1:
     st.write("A estacionariedade em séries temporais significa que suas propriedades estatísticas, como média e variância, permanecem constantes ao longo do tempo. Isso é crucial para muitos modelos de previsão. O Teste de Dickey-Fuller Aumentado (ADF) é usado para verificar se uma série é estacionária, identificando tendências significativas que podem influenciar as análises e previsões.")
     st.write(" ")
 
-    img_adf1 = 'https://github.com/giogioanima/Tech-Challenge-02/blob/main/img/test_adf1.png'
+    img_adf1 = Image.open('C:\Users\gih\Downloads\postechchall02\img\test_adf1.png')
     st.image(img_adf1, use_column_width=False)
     st.write(" ")
     st.markdown(':memo: <h class="about3-style">Observações</h>', unsafe_allow_html=True)
@@ -312,7 +314,7 @@ with tab2:
             st.write(" ")
             st.markdown(':mag_right: <h class="about3-style">Validando com Mean Absolute Percentage Error (MAPE)</h>', unsafe_allow_html=True)
             
-            img_MAmape = 'https://github.com/giogioanima/Tech-Challenge-02/blob/main/img/MA_mape.png'
+            img_MAmape = Image.open('C:\Users\gih\Downloads\postechchall02\img\MA_mape.png')
             st.image(img_MAmape, use_column_width=False)
             st.write(" ")
 
@@ -377,7 +379,7 @@ with tab2:
             df_logscale = np.log(df_limpo)
             df_diff = df_logscale - df_logscale.shift() #diferença entre o valor anterior e o atual
 
-            img_diff = 'https://github.com/giogioanima/Tech-Challenge-02/blob/main/img/diff.png'
+            img_diff = Image.open('C:\Users\gih\Downloads\postechchall02\img\diff.png')
             st.image(img_diff, use_column_width=False)
             st.write(" ")
 
@@ -395,7 +397,7 @@ with tab2:
             st.markdown(':microscope: <h class="about3-style">Análise de Autocorrelação (ACF e PACF)</h>', unsafe_allow_html=True)
             st.write("Analisar a autocorrelação em séries temporais é crucial para entender padrões temporais, selecionar e validar modelos apropriados, e avaliar a estacionariedade dos dados. A presença de autocorrelação indica dependência serial nos dados, influenciando a inclusão de termos autoregressivos e de médias móveis em modelos como o ARIMA. Além disso, a autocorrelação dos resíduos é utilizada para validar a adequação do modelo.")
             
-            img_acf = 'https://github.com/giogioanima/Tech-Challenge-02/blob/main/img/acf.png'
+            img_acf = Image.open('C:\Users\gih\Downloads\postechchall02\img\acf.png')
             st.image(img_acf, width=615, use_column_width=False)
             st.write(" ")
 
@@ -410,7 +412,7 @@ with tab2:
             st.write(" ")
             st.markdown(':microscope: <h class="about3-style">Aplicando o Modelo ARIMA</h>', unsafe_allow_html=True)
             st.write("Ao analisar modelos individuais AR e MA antes de aplicar o ARIMA, busca-se minimizar a Soma dos Quadrados dos Resíduos (RSS), onde valores mais baixos indicam uma melhor adequação do modelo aos dados. Idealmente, visamos alcançar um RSS o mais próximo possível de zero, indicando um ajuste ideal do modelo aos dados observados.")
-            img_arima = 'https://github.com/giogioanima/Tech-Challenge-02/blob/main/img/arima.png'
+            img_arima = Image.open('C:\Users\gih\Downloads\postechchall02\img\arima.png')
             st.image(img_arima, width=400, use_column_width=False)
             st.write(" ")
             st.write("- Um RSS de 1.4508 sugere que o modelo ARIMA tem uma adequação razoável aos dados observados, indicando uma boa captura das características da série temporal. No entanto, é importante considerar outras métricas de avaliação e o contexto específico da aplicação para uma interpretação completa.")
@@ -422,7 +424,7 @@ with tab2:
             st.write(" ")
             st.markdown(':mag_right: <h class="about3-style">Validando com Mean Absolute Percentage Error (MAPE)</h>', unsafe_allow_html=True)
            
-            img_mapearima = 'https://github.com/giogioanima/Tech-Challenge-02/blob/main/img/mapearima.png'
+            img_mapearima = Image.open('C:\Users\gih\Downloads\postechchall02\img\mapearima.png')
             st.image(img_mapearima, width=600, use_column_width=False)
             st.write(" ")
             st.write("MAPE: 1132.76%")
@@ -444,14 +446,14 @@ with tab2:
             st.markdown('📋 <h class="about3-style">Aplicando o Prophet</h>', unsafe_allow_html=True)
             st.write('Na primeira etapa da análise com o Prophet, é essencial modelar os dados adequadamente, seguindo o padrão de utilização das variáveis ds e y. Essa padronização é fundamental para garantir a correta interpretação e funcionamento do modelo.')
 
-            img_dsy = 'https://github.com/giogioanima/Tech-Challenge-02/blob/main/img/ds_y.png'
+            img_dsy = Image.open('C:\Users\gih\Downloads\postechchall02\img\ds_y.png')
             st.image(img_dsy, width=450, use_column_width=False)
 
             st.write(" ")
             st.write('Após etapas de modelagem, como a separação da base de treino e de teste, é possível obter os seguintes resultados:')
-            img_prop = 'https://github.com/giogioanima/Tech-Challenge-02/blob/main/img/prophet.png'
+            img_prop = Image.open('C:\Users\gih\Downloads\postechchall02\img\prophet.png')
             st.image(img_prop, use_column_width=True)
-            img_change = 'https://github.com/giogioanima/Tech-Challenge-02/blob/main/img/changepoints.png'
+            img_change = Image.open('C:\Users\gih\Downloads\postechchall02\img\changepoints.png')
             st.image(img_change, use_column_width=True)
 
             st.write('- Nos gráficos acima, os pontos pretos representam os dados reais da série temporal, enquanto os pontos vermelhos correspondem às projeções geradas pelo modelo Prophet. Além disso, a linha azul ao redor das projeções indica a margem de confiança associada às previsões.')
@@ -467,7 +469,7 @@ with tab2:
             st.write('O Prophet possui uma capacidade única de decompor automaticamente séries temporais em seus diversos componentes. Isso inclui a identificação da tendência geral dos dados, a análise dos padrões sazonais anuais e a consideração dos efeitos de feriados, quando disponíveis. Essa funcionalidade permite uma compreensão mais abrangente e detalhada da estrutura subjacente dos dados temporais, facilitando a modelagem e previsão mais precisa.')
 
             st.write('<h class="about4-style">modelo.plot_components(forecast, figsize=(10,6));</h>', unsafe_allow_html=True)
-            img_propdec = 'https://github.com/giogioanima/Tech-Challenge-02/blob/main/img/propdec.png'
+            img_propdec = Image.open('C:\Users\gih\Downloads\postechchall02\img\propdec.png')
             st.image(img_propdec, use_column_width=True)
 
             st.write(" ")
@@ -477,7 +479,7 @@ with tab2:
 
             st.write(" ")
             st.markdown(':mag_right: <h class="about3-style">Validando com Mean Absolute Percentage Error (MAPE)</h>', unsafe_allow_html=True)
-            img_propmape = 'https://github.com/giogioanima/Tech-Challenge-02/blob/main/img/propmape.png'
+            img_propmape = Image.open('C:\Users\gih\Downloads\postechchall02\img\propmape.png')
             st.image(img_propmape, use_column_width=True)
             st.write(" ")
             st.markdown('<h class="about5-style">* MAPE: 6.71%</h>', unsafe_allow_html=True)
