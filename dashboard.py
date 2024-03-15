@@ -463,16 +463,14 @@ MAPE - 90d: 6.96% - Também um ótimo resultado, mas com desempenho inferior ao 
 
             df_logscale = np.log(df_limpo)
             df_diff = df_logscale - df_logscale.shift() #diferença entre o valor anterior e o atual
-            st.write(" ")
+
             img_diff = Image.open(r'img/diff.png')
             st.image(img_diff, use_column_width=True)
             st.write(" ")
 
             df_diff.dropna(inplace=True)
-            st.write(" ")
             test_stationarity(df_diff)
-            st.write(" ")
-            st.write(" ")
+
             st.markdown(':sparkles: <h class="about3-style">Resultado:</h>', unsafe_allow_html=True)
             st.write('- Com base nos resultados fornecidos, podemos concluir que a série temporal é estacionária após a transformação por diferenciação, pois o valor da estatística do teste é significativamente menor que os valores críticos, e o valor p é muito próximo de zero. Isso sugere que não há evidências estatísticas para rejeitar a hipótese nula de estacionariedade.')
            
@@ -513,7 +511,7 @@ plt.tight_layout()
             st.code(code6, language='python')
 
             img_acf = Image.open(r'img/acf.png')
-            st.image(img_acf, width=457, use_column_width=False)
+            st.image(img_acf, width=470, use_column_width=False)
             st.write(" ")
 
             # Calcular o MAPE
